@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Header } from "@/components/header";
 import { cn } from "@/lib/utils";
 import { Inter as FontSans } from "next/font/google";
 
@@ -20,12 +21,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="zh">
-			<body
-				className={cn(
-					"min-h-screen bg-background font-sans antialiased",
-					fontSans.variable,
-				)}
-			>
+			<body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
+				{" "}
+				<Header />
 				{children}
 			</body>
 		</html>
