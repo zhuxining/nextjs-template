@@ -25,7 +25,10 @@ export const { auth, signIn, signOut } = NextAuth({
 
 					const encoder = new TextEncoder();
 					const saltedPassword = encoder.encode(password + user.salt);
-					const hashedPasswordBuffer = await crypto.subtle.digest("SHA-256", saltedPassword);
+					const hashedPasswordBuffer = await crypto.subtle.digest(
+						"SHA-256",
+						saltedPassword,
+					);
 					const hashedPassword = getStringFromBuffer(hashedPasswordBuffer);
 
 					if (hashedPassword === user.password) {

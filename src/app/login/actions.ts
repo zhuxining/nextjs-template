@@ -1,7 +1,7 @@
 "use server";
 
 import { signIn } from "@/auth";
-import { User } from "@/lib/types";
+import type { User } from "@/lib/types";
 import { ResultCode } from "@/lib/utils";
 import { kv } from "@vercel/kv";
 import { AuthError } from "next-auth";
@@ -17,7 +17,10 @@ interface Result {
 	resultCode: ResultCode;
 }
 
-export async function authenticate(_prevState: Result | undefined, formData: FormData): Promise<Result | undefined> {
+export async function authenticate(
+	_prevState: Result | undefined,
+	formData: FormData,
+): Promise<Result | undefined> {
 	try {
 		const email = formData.get("email");
 		const password = formData.get("password");

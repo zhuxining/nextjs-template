@@ -18,7 +18,8 @@ export function formatDate(input: string | number | Date): string {
 		year: "numeric",
 	});
 }
-export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const sleep = (ms: number) =>
+	new Promise((resolve) => setTimeout(resolve, ms));
 
 export enum ResultCode {
 	InvalidCredentials = "INVALID_CREDENTIALS",

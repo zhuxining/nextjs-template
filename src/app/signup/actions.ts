@@ -7,7 +7,11 @@ import { AuthError } from "next-auth";
 import { z } from "zod";
 import { getUser } from "../login/actions";
 
-export async function createUser(email: string, hashedPassword: string, salt: string) {
+export async function createUser(
+	email: string,
+	hashedPassword: string,
+	salt: string,
+) {
 	const existingUser = await getUser(email);
 
 	if (existingUser) {
@@ -37,7 +41,10 @@ interface Result {
 	resultCode: ResultCode;
 }
 
-export async function signup(_prevState: Result | undefined, formData: FormData): Promise<Result | undefined> {
+export async function signup(
+	_prevState: Result | undefined,
+	formData: FormData,
+): Promise<Result | undefined> {
 	const email = formData.get("email") as string;
 	const password = formData.get("password") as string;
 
@@ -56,7 +63,10 @@ export async function signup(_prevState: Result | undefined, formData: FormData)
 
 		const encoder = new TextEncoder();
 		const saltedPassword = encoder.encode(password + salt);
-		const hashedPasswordBuffer = await crypto.subtle.digest("SHA-256", saltedPassword);
+		const hashedPasswordBuffer = await crypto.subtle.digest(
+			"SHA-256",
+			saltedPassword,
+		);
 		const hashedPassword = getStringFromBuffer(hashedPasswordBuffer);
 
 		try {
