@@ -1,18 +1,8 @@
-import { auth } from "@/auth";
-import LoginForm from "@/components/login-form";
-import type { Session } from "@/lib/types";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function LoginPage() {
-	const session = (await auth()) as Session;
+import { Button } from "@/components/ui/button";
+import { signIn } from "next-auth/react";
 
-	if (session) {
-		redirect("/");
-	}
-
-	return (
-		<main className="flex flex-col p-4">
-			<LoginForm />
-		</main>
-	);
+export default function SignInPage() {
+	return <Button onClick={() => signIn()}>Sign in</Button>;
 }

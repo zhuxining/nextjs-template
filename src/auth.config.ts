@@ -1,26 +1,27 @@
 import type { NextAuthConfig } from "next-auth";
 import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 
 export const authConfig = {
 	secret: process.env.AUTH_SECRET,
 	pages: {
-		signIn: "/login",
+		// signIn: "/login",
 		newUser: "/signup",
 	},
 	callbacks: {
-		async authorized({ auth, request: { nextUrl } }) {
-			const isLoggedIn = !!auth?.user;
-			const isOnLoginPage = nextUrl.pathname.startsWith("/login");
-			const isOnSignupPage = nextUrl.pathname.startsWith("/signup");
+		// async authorized({ auth, request: { nextUrl } }) {
+		// 	const isLoggedIn = !!auth?.user;
+		// 	const isOnLoginPage = nextUrl.pathname.startsWith("/login");
+		// 	const isOnSignupPage = nextUrl.pathname.startsWith("/signup");
 
-			if (isLoggedIn) {
-				if (isOnLoginPage || isOnSignupPage) {
-					return Response.redirect(new URL("/", nextUrl));
-				}
-			}
+		// 	if (isLoggedIn) {
+		// 		if (isOnLoginPage || isOnSignupPage) {
+		// 			return Response.redirect(new URL("/", nextUrl));
+		// 		}
+		// 	}
 
-			return true;
-		},
+		// 	return true;
+		// },
 		async jwt({ token, user }) {
 			if (user) {
 				token = { ...token, id: user.id };
@@ -39,5 +40,5 @@ export const authConfig = {
 			return session;
 		},
 	},
-	providers: [GitHub],
+	providers: [GitHub, Google],
 } satisfies NextAuthConfig;
