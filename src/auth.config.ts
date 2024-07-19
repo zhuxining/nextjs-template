@@ -64,31 +64,35 @@ export const authConfig = {
 				email: {},
 				password: {},
 			},
-			authorize: async (credentials) => {
-				try {
-					let user = null;
+			async authorize(credentials) {
+				const parsedCredentials = z
+					.object({
+						email: z.string().email(),
+						password: z.string().min(6),
+					})
+					.safeParse(credentials);
 
-					const { email, password } =
-						await signInSchema.parseAsync(credentials);
+				if (parsedCredentials.success) {
+					const { email, password } = parsedCredentials.data;
+					const user = await getUser(email);
 
-					// logic to salt and hash password
-					const pwHash = saltAndHashPassword(password);
+					if (!user) return null;
 
-					// logic to verify if user exists
-					user = await getUserFromDb(email, pwHash);
+					const encoder = new TextEncoder();
+					const saltedPassword = encoder.encode(password + user.salt);
+					const hashedPasswordBuffer = await crypto.subtle.digest(
+						"SHA-256",
+						saltedPassword,
+					);
+					const hashedPassword = getStringFromBuffer(hashedPasswordBuffer);
 
-					if (!user) {
-						throw new Error("User not found.");
+					if (hashedPassword === user.password) {
+						return user;
 					}
-
-					// return json object with the user data
-					return user;
-				} catch (error) {
-					if (error instanceof ZodError) {
-						// Return `null` to indicate that the credentials are invalid
-						return null;
-					}
+					return null;
 				}
+
+				return null;
 			},
 		}),
 

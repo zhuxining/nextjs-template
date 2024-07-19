@@ -6,13 +6,13 @@ import { getMessageFromCode } from "@/lib/utils";
 import { CircleUser, Lock, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useEffect } from "react";
+import { useFormStatus } from "react-dom";
 import { Button } from "./ui/button";
 
 export default function LoginForm() {
 	const router = useRouter();
-	const [result, dispatch] = useFormState(authenticate, undefined);
+	const [result, dispatch] = useActionState(authenticate, undefined);
 
 	useEffect(() => {
 		if (result) {
