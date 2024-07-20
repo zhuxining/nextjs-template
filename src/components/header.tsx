@@ -1,5 +1,7 @@
+import {} from "@radix-ui/react-icons";
 import { CircleUser, Menu, Package2, Search } from "lucide-react";
 import Link from "next/link";
+import { ThemeToggle } from "./theme-toggle";
 
 import { Button } from "@/components/ui/button";
 
@@ -114,6 +116,7 @@ export function Header() {
 						/>
 					</div>
 				</form>
+				<ThemeToggle />
 				<UserMenu />
 			</div>
 		</header>

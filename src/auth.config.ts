@@ -18,7 +18,7 @@ async function getUser(email: string) {
 export const authConfig = {
 	secret: process.env.AUTH_SECRET,
 	pages: {
-		signIn: "/login",
+		// signIn: "/login",
 		newUser: "/signup",
 	},
 	session: { strategy: "jwt" },

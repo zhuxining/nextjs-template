@@ -71,7 +71,7 @@ export function SignInButton() {
 				await signIn();
 			}}
 		>
-			<button type="submit">Sign in</button>
+			<Button type="submit">Sign in</Button>
 		</form>
 	);
 }
