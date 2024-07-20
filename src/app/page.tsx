@@ -1,4 +1,6 @@
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
 	return (
@@ -47,6 +49,21 @@ export default function Home() {
 						Read our docs
 					</a>
 				</div>
+
+				<section className="flex flex-col gap-4">
+					<Button variant="link">
+						<Link href="/ex">ex page</Link>
+					</Button>
+					<Button variant="link">
+						<Link href="/es">es page</Link>
+					</Button>
+					<Button variant="link">
+						<Link href="/login">signin page</Link>
+					</Button>
+					<Button variant="link">
+						<Link href="/signup">signup page</Link>
+					</Button>
+				</section>
 			</main>
 			<footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
 				<a

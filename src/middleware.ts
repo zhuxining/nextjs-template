@@ -1,15 +1,15 @@
 import { auth } from "@/auth";
 
 export default auth((req) => {
-	const publicPaths = ["/login", "/signup", "/api/auth"];
+	const publicPaths = ["/login", "/signup", "/api/auth", "/ex"];
 
 	const isPublicRoute =
 		publicPaths.some((path) => req.nextUrl.pathname.startsWith(path)) ||
 		req.nextUrl.pathname === "/";
 
-	if (!req.auth && !isPublicRoute) {
-		return Response.redirect(new URL("/api/auth/signin", req.nextUrl.origin));
-	}
+	// if (!req.auth && !isPublicRoute) {
+	// 	return Response.redirect(new URL("/api/auth/signin", req.nextUrl.origin));
+	// }
 });
 
 export const config = {

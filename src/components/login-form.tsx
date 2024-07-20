@@ -1,6 +1,6 @@
 "use client";
 
-import { authenticate } from "@/app/login/actions";
+import { authenticate } from "@/app/signin/actions";
 import { toast } from "@/components/ui/use-toast";
 import { getMessageFromCode } from "@/lib/utils";
 import { CircleUser, Lock, LogOut, Settings } from "lucide-react";

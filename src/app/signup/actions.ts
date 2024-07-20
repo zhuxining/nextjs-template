@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { ResultCode, getStringFromBuffer } from "@/lib/utils";
 import { AuthError } from "next-auth";
 import { z } from "zod";
-import { getUser } from "../login/actions";
+import { getUser } from "../signin/actions";
 
 export async function createUser(
 	email: string,

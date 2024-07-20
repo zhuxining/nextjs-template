@@ -17,8 +17,9 @@ async function getUser(email: string) {
 
 export const authConfig = {
 	secret: process.env.AUTH_SECRET,
+
 	pages: {
-		// signIn: "/login",
+		// signIn: "/signin",
 		newUser: "/signup",
 	},
 	session: { strategy: "jwt" },
@@ -65,12 +66,7 @@ export const authConfig = {
 				password: {},
 			},
 			async authorize(credentials) {
-				const parsedCredentials = z
-					.object({
-						email: z.string().email(),
-						password: z.string().min(6),
-					})
-					.safeParse(credentials);
+				const parsedCredentials = signInSchema.safeParse(credentials);
 
 				if (parsedCredentials.success) {
 					const { email, password } = parsedCredentials.data;

@@ -1,4 +1,4 @@
-import { auth, signIn, signOut } from "@/auth";
+import { auth } from "@/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +10,9 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CircleUser, Lock, LogOut, Settings } from "lucide-react";
+import { Lock, LogOut, Settings } from "lucide-react";
+import { SignInButton } from "./auth/signin-button";
+import { SignOutButton } from "./auth/signout-button";
 
 import Link from "next/link";
 
@@ -36,7 +38,7 @@ export default async function UserMenu() {
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-56">
-				<DropdownMenuLabel>{session.user.name || "User"}</DropdownMenuLabel>
+				<DropdownMenuLabel>{session.user.email || "User"}</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
 					<DropdownMenuItem asChild>
@@ -56,36 +58,11 @@ export default async function UserMenu() {
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem>
+					<LogOut className="mr-2 h-4 w-4" />
 					<SignOutButton />
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
-	);
-}
-
-export function SignInButton() {
-	return (
-		<form
-			action={async () => {
-				"use server";
-				await signIn();
-			}}
-		>
-			<Button type="submit">Sign in</Button>
-		</form>
-	);
-}
-
-function SignOutButton() {
-	return (
-		<form
-			action={async () => {
-				"use server";
-				await signOut({ redirectTo: "/" });
-			}}
-		>
-			<button type="submit">Sign Out</button>
-		</form>
 	);
 }
 

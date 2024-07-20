@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/header";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/theme/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 import { Inter as FontSans } from "next/font/google";
 
@@ -21,7 +22,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="zh">
+		<html lang="zh" suppressHydrationWarning>
 			<body
 				className={cn(
 					"min-h-screen bg-background font-sans antialiased",
@@ -37,6 +38,7 @@ export default function RootLayout({
 					<Header />
 					{children}
 				</ThemeProvider>
+				<Toaster />
 			</body>
 		</html>
 	);
