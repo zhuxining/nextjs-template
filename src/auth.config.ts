@@ -36,6 +36,10 @@ export const authConfig = {
 			}
 			return true;
 		},
+		// session({ session, user }) {
+		// 	session.user.id = user.id;
+		// 	return session;
+		// },
 		async jwt({ token, user }) {
 			if (user) {
 				token = { ...token, id: user.id };

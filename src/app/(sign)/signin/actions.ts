@@ -1,19 +1,8 @@
 "use server";
 import { signIn } from "@/auth";
-import prisma from "@/lib/prisma";
 import { ResultCode } from "@/lib/utils";
-import type { User } from "next-auth";
+import { signInSchema } from "@/lib/zod";
 import { AuthError } from "next-auth";
-import { z } from "zod";
-
-export async function getUser(email: string) {
-	const user = await prisma.user.findUnique({
-		where: {
-			email: email,
-		},
-	});
-	return user;
-}
 
 interface Result {
 	type: string;
@@ -21,22 +10,16 @@ interface Result {
 }
 
 export async function authenticate(
-	_prevState: Result | undefined,
 	formData: FormData,
 ): Promise<Result | undefined> {
 	try {
 		const email = formData.get("email");
 		const password = formData.get("password");
 
-		const parsedCredentials = z
-			.object({
-				email: z.string().email(),
-				password: z.string().min(6),
-			})
-			.safeParse({
-				email,
-				password,
-			});
+		const parsedCredentials = signInSchema.safeParse({
+			email,
+			password,
+		});
 
 		if (parsedCredentials.success) {
 			await signIn("credentials", {

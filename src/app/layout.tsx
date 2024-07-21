@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Header } from "@/components/header";
+import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
+import { SessionProvider } from "next-auth/react";
 import { Inter as FontSans } from "next/font/google";
 
 const fontSans = FontSans({
@@ -29,16 +30,18 @@ export default function RootLayout({
 					fontSans.variable,
 				)}
 			>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-					disableTransitionOnChange
-				>
-					<Header />
-					{children}
-				</ThemeProvider>
-				<Toaster />
+				<SessionProvider>
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="system"
+						enableSystem
+						disableTransitionOnChange
+					>
+						<Header />
+						{children}
+						<Toaster />
+					</ThemeProvider>
+				</SessionProvider>
 			</body>
 		</html>
 	);

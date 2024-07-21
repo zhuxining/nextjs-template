@@ -11,34 +11,33 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Lock, LogOut, Settings } from "lucide-react";
+import type { User } from "next-auth";
+import Link from "next/link";
+import { Suspense } from "react";
 import { SignInButton } from "./auth/signin-button";
 import { SignOutButton } from "./auth/signout-button";
 
-import Link from "next/link";
+interface UserMenuProps {
+	user: User;
+}
 
-export default async function UserMenu() {
-	const session = await auth();
-
-	if (!session) return <SignInButton />;
+export default function UserMenu({ user }: UserMenuProps) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button variant="ghost" size="icon" className="rounded-full">
 					<Avatar>
-						{session.user.image && (
-							<AvatarImage
-								src={session.user.image}
-								alt="User profile picture"
-							/>
+						{user.image && (
+							<AvatarImage src={user.image} alt="User profile picture" />
 						)}
 						<AvatarFallback>
-							{getUserInitials(session.user.name || "Av")}
+							{getUserInitials(user.name || "Av")}
 						</AvatarFallback>
 					</Avatar>
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-56">
-				<DropdownMenuLabel>{session.user.email || "User"}</DropdownMenuLabel>
+				<DropdownMenuLabel>{user.email}</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
 					<DropdownMenuItem asChild>
@@ -47,7 +46,7 @@ export default async function UserMenu() {
 							<span>Settings</span>
 						</Link>
 					</DropdownMenuItem>
-					{session.user.role === "admin" && (
+					{user.role === "admin" && (
 						<DropdownMenuItem asChild>
 							<Link href="/admin">
 								<Lock className="mr-2 h-4 w-4" />

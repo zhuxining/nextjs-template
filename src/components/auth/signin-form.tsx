@@ -1,5 +1,6 @@
 "use client";
 
+import { authenticate } from "@/app/(sign)/signin/actions";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -18,17 +19,19 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { getMessageFromCode } from "@/lib/utils";
 import { signInSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AuthError } from "next-auth";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 
 export default function SigninForm() {
 	const { toast } = useToast();
+	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
+
 	const form = useForm<z.infer<typeof signInSchema>>({
 		resolver: zodResolver(signInSchema),
 		defaultValues: {
@@ -39,32 +42,29 @@ export default function SigninForm() {
 	});
 
 	async function onSubmit(data: z.infer<typeof signInSchema>) {
+		setIsLoading(true);
 		try {
-			const result = await signIn("credentials", {
-				email: data.email?.toString().toLowerCase(),
-				password: data.password,
-				redirect: false,
-			});
+			const formData = new FormData();
+			formData.append("email", data.email);
+			formData.append("password", data.password);
 
-			if (result?.error) {
+			const result = await authenticate(formData);
+
+			if (result) {
+				if (result.type === "error")
+					toast({
+						title: result.resultCode,
+						description: getMessageFromCode(result.resultCode),
+						variant: "destructive",
+					});
+				router.push("/");
 				toast({
-					title: "Error",
-					description: "Invalid email or password.",
-					variant: "destructive",
-				});
-			} else {
-				router.push("/"); // Redirect to dashboard or home page
-				toast({
-					title: "Success",
-					description: "You have successfully logged in.",
+					title: result.resultCode,
+					description: getMessageFromCode(result.resultCode),
 				});
 			}
-		} catch (error) {
-			if (error instanceof AuthError) {
-				return { error: "error", message: error.message, status: 401 };
-			}
-
-			throw error;
+		} finally {
+			setIsLoading(false);
 		}
 	}
 
@@ -114,8 +114,8 @@ export default function SigninForm() {
 									</FormItem>
 								)}
 							/>
-							<Button className="w-full" type="submit">
-								Sign In
+							<Button className="w-full" type="submit" disabled={isLoading}>
+								{isLoading ? "Sign In..." : "Sign In"}
 							</Button>
 						</form>
 					</Form>

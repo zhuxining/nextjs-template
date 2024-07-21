@@ -6,7 +6,6 @@ import prisma from "@/lib/prisma";
 import { ResultCode, getStringFromBuffer } from "@/lib/utils";
 import { signInSchema } from "@/lib/zod";
 import { AuthError } from "next-auth";
-import { z } from "zod";
 
 export async function createUser(
 	email: string,

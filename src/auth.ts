@@ -10,7 +10,7 @@ import { getStringFromBuffer } from "./lib/utils";
 
 export const { auth, signIn, signOut, handlers } = NextAuth({
 	adapter: PrismaAdapter(prisma) as Adapter,
-
+	trustHost: true,
 	...authConfig,
 	logger: {
 		error(code, ...message) {

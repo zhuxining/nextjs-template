@@ -1,6 +1,11 @@
+"use client";
+
+import { auth } from "@/auth";
 import {} from "@radix-ui/react-icons";
-import { CircleUser, Menu, Package2, Search } from "lucide-react";
+import { Menu, Package2, Search } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { Suspense } from "react";
 import { ThemeToggle } from "./theme/theme-toggle";
 
 import { Button } from "@/components/ui/button";
@@ -15,9 +20,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { SignInButton } from "./auth/signin-button";
 import UserMenu from "./user-menu";
 
-export function Header() {
+export default function Header() {
+	// const session = await auth();
+
+	const session = useSession();
+	const user = session.data?.user;
+
 	return (
 		<header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
 			<nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
@@ -117,7 +128,13 @@ export function Header() {
 					</div>
 				</form>
 				<ThemeToggle />
-				<UserMenu />
+				{/* <Suspense fallback={<p>Loading weather...</p>}>
+					{session?.user ? <UserMenu user={session.user} /> : <SignInButton />}
+				</Suspense> */}
+				<Suspense fallback={<p>Loading weather...</p>}>
+					{user && <UserMenu user={user} />}
+					{!user && session.status !== "loading" && <SignInButton />}
+				</Suspense>
 			</div>
 		</header>
 	);
