@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { SignOutButton } from "@/components/auth/signout-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,9 +13,6 @@ import {
 import { Lock, LogOut, Settings } from "lucide-react";
 import type { User } from "next-auth";
 import Link from "next/link";
-import { Suspense } from "react";
-import { SignInButton } from "./auth/signin-button";
-import { SignOutButton } from "./auth/signout-button";
 
 interface UserMenuProps {
 	user: User;

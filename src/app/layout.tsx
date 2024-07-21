@@ -30,18 +30,16 @@ export default function RootLayout({
 					fontSans.variable,
 				)}
 			>
-				<SessionProvider>
-					<ThemeProvider
-						attribute="class"
-						defaultTheme="system"
-						enableSystem
-						disableTransitionOnChange
-					>
-						<Header />
-						{children}
-						<Toaster />
-					</ThemeProvider>
-				</SessionProvider>
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+					disableTransitionOnChange
+				>
+					<Header />
+					{children}
+					<Toaster />
+				</ThemeProvider>
 			</body>
 		</html>
 	);
