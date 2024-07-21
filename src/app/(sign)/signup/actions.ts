@@ -1,12 +1,12 @@
 "use server";
 
 import { signIn } from "@/auth";
+import { getUser } from "@/auth.config";
 import prisma from "@/lib/prisma";
 import { ResultCode, getStringFromBuffer } from "@/lib/utils";
 import { signInSchema } from "@/lib/zod";
 import { AuthError } from "next-auth";
 import { z } from "zod";
-import { getUser } from "../signin/actions";
 
 export async function createUser(
 	email: string,
@@ -26,6 +26,7 @@ export async function createUser(
 			email,
 			password: hashedPassword,
 			salt,
+			name: email.split("@")[0].toString(),
 		};
 
 		await prisma.user.create({
@@ -59,7 +60,7 @@ export async function signup(formData: FormData): Promise<Result | undefined> {
 		const encoder = new TextEncoder();
 		const saltedPassword = encoder.encode(password + salt);
 		const hashedPasswordBuffer = await crypto.subtle.digest(
-			"SHA-256",
+			"SHA-512",
 			saltedPassword,
 		);
 		const hashedPassword = getStringFromBuffer(hashedPasswordBuffer);

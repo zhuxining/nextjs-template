@@ -104,7 +104,7 @@ export default function SignupPage() {
 			const encoder = new TextEncoder();
 			const saltedPassword = encoder.encode(data.password + salt);
 			const hashedPasswordBuffer = await crypto.subtle.digest(
-				"SHA-256",
+				"SHA-512",
 				saltedPassword,
 			);
 			const hashedPassword = getStringFromBuffer(hashedPasswordBuffer);

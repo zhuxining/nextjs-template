@@ -32,7 +32,7 @@ export default async function UserMenu() {
 							/>
 						)}
 						<AvatarFallback>
-							{getUserInitials(session.user.email || "Av")}
+							{getUserInitials(session.user.name || "Av")}
 						</AvatarFallback>
 					</Avatar>
 				</Button>

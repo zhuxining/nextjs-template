@@ -1,12 +1,12 @@
 import prisma from "@/lib/prisma";
+import { getStringFromBuffer } from "@/lib/utils";
 import { signInSchema } from "@/lib/zod";
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
-import { ZodError, z } from "zod";
 
-async function getUser(email: string) {
+export async function getUser(email: string) {
 	const user = await prisma.user.findUnique({
 		where: {
 			email: email,
@@ -26,7 +26,7 @@ export const authConfig = {
 	callbacks: {
 		async authorized({ auth, request: { nextUrl } }) {
 			const isLoggedIn = !!auth?.user;
-			const isOnLoginPage = nextUrl.pathname.startsWith("/login");
+			const isOnLoginPage = nextUrl.pathname.startsWith("/signin");
 			const isOnSignupPage = nextUrl.pathname.startsWith("/signup");
 
 			if (isLoggedIn) {
@@ -77,7 +77,7 @@ export const authConfig = {
 					const encoder = new TextEncoder();
 					const saltedPassword = encoder.encode(password + user.salt);
 					const hashedPasswordBuffer = await crypto.subtle.digest(
-						"SHA-256",
+						"SHA-512",
 						saltedPassword,
 					);
 					const hashedPassword = getStringFromBuffer(hashedPasswordBuffer);
@@ -96,9 +96,3 @@ export const authConfig = {
 		Google,
 	],
 } satisfies NextAuthConfig;
-
-function getStringFromBuffer(buffer: ArrayBuffer) {
-	return Array.from(new Uint8Array(buffer))
-		.map((byte) => byte.toString(16).padStart(2, "0"))
-		.join("");
-}

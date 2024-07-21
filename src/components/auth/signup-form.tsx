@@ -1,6 +1,6 @@
 "use client";
 
-import { signup } from "@/app/signup/actions";
+import { signup } from "@/app/(sign)/signup/actions";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import type { ResultCode } from "@/lib/utils";
+import { getMessageFromCode } from "@/lib/utils";
 import { signUpSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -51,27 +51,19 @@ export default function SignupForm() {
 
 			const result = await signup(formData);
 
-			if (result?.type === "success") {
-				toast({
-					title: "Account created",
-					description: "You have successfully signed up.",
-				});
+			if (result) {
+				if (result.type === "error")
+					toast({
+						title: result.resultCode,
+						description: getMessageFromCode(result.resultCode),
+						variant: "destructive",
+					});
 				router.push("/");
-			} else {
-				throw new Error(
-					result?.resultCode || "An error occurred during signup",
-				);
+				toast({
+					title: result.resultCode,
+					description: getMessageFromCode(result.resultCode),
+				});
 			}
-		} catch (error) {
-			console.error("Signup error:", error);
-			toast({
-				title: "Error",
-				description:
-					error instanceof Error
-						? error.message
-						: "An unexpected error occurred. Please try again.",
-				variant: "destructive",
-			});
 		} finally {
 			setIsLoading(false);
 		}
