@@ -40,9 +40,9 @@ export default function SigninForm() {
 	async function onSubmit(data: z.infer<typeof signInSchema>) {
 		try {
 			const result = await signIn("credentials", {
-				email: data.email,
+				email: data.email?.toString().toLowerCase(),
 				password: data.password,
-				redirect: true,
+				redirect: false,
 			});
 
 			if (result?.error) {

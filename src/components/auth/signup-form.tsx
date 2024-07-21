@@ -20,39 +20,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import type { ResultCode } from "@/lib/utils";
+import { signUpSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-const FormSchema = z
-	.object({
-		email: z.string().email({
-			message: "Please enter a valid email address.",
-		}),
-		password: z.string().min(6, {
-			message: "Password must be at least 6 characters long.",
-		}),
-		confirmPassword: z.string(),
-	})
-	.refine((data) => data.password === data.confirmPassword, {
-		message: "Passwords don't match",
-		path: ["confirmPassword"],
-	});
-
-interface SignupFormProps {
-	signup: (
-		formData: FormData,
-	) => Promise<{ type: string; resultCode: ResultCode } | undefined>;
-}
+import type { z } from "zod";
 
 export default function SignupForm() {
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
 
-	const form = useForm<z.infer<typeof FormSchema>>({
-		resolver: zodResolver(FormSchema),
+	const form = useForm<z.infer<typeof signUpSchema>>({
+		resolver: zodResolver(signUpSchema),
 		defaultValues: {
 			email: "",
 			password: "",
@@ -61,7 +41,7 @@ export default function SignupForm() {
 		mode: "onChange",
 	});
 
-	async function onSubmit(data: z.infer<typeof FormSchema>) {
+	async function onSubmit(data: z.infer<typeof signUpSchema>) {
 		setIsLoading(true);
 
 		try {

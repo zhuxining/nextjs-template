@@ -19,7 +19,7 @@ export const authConfig = {
 	secret: process.env.AUTH_SECRET,
 
 	pages: {
-		// signIn: "/signin",
+		signIn: "/signin",
 		newUser: "/signup",
 	},
 	session: { strategy: "jwt" },

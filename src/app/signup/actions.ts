@@ -3,6 +3,7 @@
 import { signIn } from "@/auth";
 import prisma from "@/lib/prisma";
 import { ResultCode, getStringFromBuffer } from "@/lib/utils";
+import { signInSchema } from "@/lib/zod";
 import { AuthError } from "next-auth";
 import { z } from "zod";
 import { getUser } from "../signin/actions";
@@ -44,18 +45,13 @@ interface Result {
 }
 
 export async function signup(formData: FormData): Promise<Result | undefined> {
-	const email = formData.get("email") as string;
+	const email = formData.get("email")?.toString().toLowerCase() as string;
 	const password = formData.get("password") as string;
 
-	const parsedCredentials = z
-		.object({
-			email: z.string().email(),
-			password: z.string().min(6),
-		})
-		.safeParse({
-			email,
-			password,
-		});
+	const parsedCredentials = signInSchema.safeParse({
+		email,
+		password,
+	});
 
 	if (parsedCredentials.success) {
 		const salt = crypto.randomUUID();
@@ -100,10 +96,9 @@ export async function signup(formData: FormData): Promise<Result | undefined> {
 				resultCode: ResultCode.UnknownError,
 			};
 		}
-	} else {
-		return {
-			type: "error",
-			resultCode: ResultCode.InvalidCredentials,
-		};
 	}
+	return {
+		type: "error",
+		resultCode: ResultCode.InvalidCredentials,
+	};
 }
