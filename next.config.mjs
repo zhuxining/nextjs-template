@@ -5,6 +5,11 @@ const nextConfig = {
 			allowedOrigins: ["localhost", "*.my-proxy.com"],
 		},
 	},
+	logging: {
+		fetches: {
+			fullUrl: true,
+		},
+	},
 };
 
 export default nextConfig;

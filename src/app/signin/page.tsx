@@ -3,7 +3,7 @@ import SigninForm from "@/components/auth/signin-form";
 
 import { redirect } from "next/navigation";
 
-export default async function LoginPage() {
+export default async function SigninPage() {
 	const session = await auth();
 
 	if (session) {
