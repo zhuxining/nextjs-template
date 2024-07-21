@@ -43,10 +43,7 @@ interface Result {
 	resultCode: ResultCode;
 }
 
-export async function signup(
-	_prevState: Result | undefined,
-	formData: FormData,
-): Promise<Result | undefined> {
+export async function signup(formData: FormData): Promise<Result | undefined> {
 	const email = formData.get("email") as string;
 	const password = formData.get("password") as string;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "@/auth";
+import { signup } from "@/app/signup/actions";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import { getStringFromBuffer } from "@/lib/utils";
+import type { ResultCode } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -31,8 +31,8 @@ const FormSchema = z
 		email: z.string().email({
 			message: "Please enter a valid email address.",
 		}),
-		password: z.string().min(8, {
-			message: "Password must be at least 8 characters long.",
+		password: z.string().min(6, {
+			message: "Password must be at least 6 characters long.",
 		}),
 		confirmPassword: z.string(),
 	})
@@ -41,15 +41,13 @@ const FormSchema = z
 		path: ["confirmPassword"],
 	});
 
-type CreateUserFunction = (
-	email: string,
-	hashedPassword: string,
-	salt: string,
-) => Promise<{ type: string; description: string }>;
+interface SignupFormProps {
+	signup: (
+		formData: FormData,
+	) => Promise<{ type: string; resultCode: ResultCode } | undefined>;
+}
 
-export default function SignupForm({
-	createUser,
-}: { createUser: CreateUserFunction }) {
+export default function SignupForm() {
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -67,37 +65,22 @@ export default function SignupForm({
 		setIsLoading(true);
 
 		try {
-			const salt = crypto.randomUUID();
-			const encoder = new TextEncoder();
-			const saltedPassword = encoder.encode(data.password + salt);
-			const hashedPasswordBuffer = await crypto.subtle.digest(
-				"SHA-256",
-				saltedPassword,
-			);
-			const hashedPassword = getStringFromBuffer(hashedPasswordBuffer);
+			const formData = new FormData();
+			formData.append("email", data.email);
+			formData.append("password", data.password);
 
-			const result = await createUser(data.email, hashedPassword, salt);
+			const result = await signup(formData);
 
-			if (result.type === "success") {
+			if (result?.type === "success") {
 				toast({
 					title: "Account created",
 					description: "You have successfully signed up.",
 				});
-
-				// Perform sign in on the client side
-				const signInResult = await signIn("credentials", {
-					email: data.email,
-					password: data.password,
-					redirect: false,
-				});
-
-				if (signInResult?.error) {
-					throw new Error(signInResult.error);
-				}
-
-				router.push("/login");
+				router.push("/");
 			} else {
-				throw new Error(result.description);
+				throw new Error(
+					result?.resultCode || "An error occurred during signup",
+				);
 			}
 		} catch (error) {
 			console.error("Signup error:", error);
