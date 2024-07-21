@@ -45,6 +45,17 @@ export async function authenticate(
 						type: "error",
 						resultCode: ResultCode.InvalidCredentials,
 					};
+				case "AccessDenied":
+					return {
+						type: "error",
+						resultCode: ResultCode.InvalidCredentials,
+					};
+				case "CallbackRouteError":
+					return {
+						type: "error",
+						resultCode: ResultCode.InvalidSubmission,
+					};
+
 				default:
 					return {
 						type: "error",
