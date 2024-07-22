@@ -27,9 +27,7 @@ export default function UserMenu({ user }: UserMenuProps) {
 						{user.image && (
 							<AvatarImage src={user.image} alt="User profile picture" />
 						)}
-						<AvatarFallback>
-							{getUserInitials(user.name || "Av")}
-						</AvatarFallback>
+						<AvatarFallback>{getUserInitials(user.name || "X")}</AvatarFallback>
 					</Avatar>
 				</Button>
 			</DropdownMenuTrigger>

@@ -18,12 +18,17 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { getMessageFromCode } from "@/lib/utils";
 import { signInSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import github from "next-auth/providers/github";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
@@ -32,6 +37,9 @@ export default function SigninForm() {
 	const { toast } = useToast();
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
+	const searchParams = useSearchParams();
+
+	const callbackUrl = searchParams.get("callbackUrl") || "/";
 
 	const form = useForm<z.infer<typeof signInSchema>>({
 		resolver: zodResolver(signInSchema),
@@ -50,6 +58,7 @@ export default function SigninForm() {
 			formData.append("password", data.password);
 
 			const result = await authenticate(formData);
+			console.log(callbackUrl);
 
 			if (result) {
 				if (result.type === "error")
@@ -59,11 +68,11 @@ export default function SigninForm() {
 						variant: "destructive",
 					});
 				else {
+					router.push(callbackUrl);
 					toast({
 						title: result.resultCode,
 						description: getMessageFromCode(result.resultCode),
 					});
-					router.push("/");
 				}
 			}
 		} finally {
@@ -127,6 +136,13 @@ export default function SigninForm() {
 						Sign up
 					</Link>
 				</div>
+				<Separator className="my-4" />
+				<Button
+					variant="secondary"
+					onClick={() => signIn("github", { callbackUrl: callbackUrl })}
+				>
+					Sign In With Github
+				</Button>
 			</CardContent>
 		</Card>
 	);

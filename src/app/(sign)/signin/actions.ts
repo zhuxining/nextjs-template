@@ -3,6 +3,8 @@ import { signIn } from "@/auth";
 import { ResultCode } from "@/lib/utils";
 import { signInSchema } from "@/lib/zod";
 import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 interface Result {
 	type: string;
@@ -27,7 +29,6 @@ export async function authenticate(
 				password,
 				redirect: false,
 			});
-
 			return {
 				type: "success",
 				resultCode: ResultCode.UserLoggedIn,

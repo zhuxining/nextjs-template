@@ -59,11 +59,11 @@ export default function SignupForm() {
 						variant: "destructive",
 					});
 				else {
+					router.push("/");
 					toast({
 						title: result.resultCode,
 						description: getMessageFromCode(result.resultCode),
 					});
-					router.push("/");
 				}
 			}
 		} finally {
