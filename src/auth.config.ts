@@ -99,6 +99,8 @@ export default {
 		//NOTE:如果要启用 Nodemailer，不能用 Middleware 推荐的 auth.config.ts 方式配置，否则在验证邮件地址时会抛出如下错误：
 		// Error: The edge runtime does not support Node.js 'stream' module.
 		// see https://github.com/nextauthjs/next-auth/issues/10919 。
+		// 如果要启用，将 auth.config.ts 中的配置 auth.ts。
+
 		// Nodemailer({
 		// 	server: {
 		// 		host: process.env.EMAIL_SERVER_HOST,
