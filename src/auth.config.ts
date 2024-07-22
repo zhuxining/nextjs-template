@@ -3,10 +3,10 @@ import { getStringFromBuffer } from "@/lib/utils";
 import { signInSchema } from "@/lib/zod";
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import EmailProvider from "next-auth/providers/email";
-import Email from "next-auth/providers/email";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import Nodemailer from "next-auth/providers/nodemailer";
+import Resend from "next-auth/providers/resend";
 
 export async function getUser(email: string) {
 	const user = await prisma.user.findUnique({
@@ -19,15 +19,12 @@ export async function getUser(email: string) {
 
 export default {
 	providers: [
-		// Resend({
-		// 	from: "no-reply@send.ningxikeji.com",
-		// }),
 		Credentials({
 			// You can specify which fields should be submitted, by adding keys to the `credentials` object.
 			// e.g. domain, username, password, 2FA token, etc.
 			credentials: {
-				email: {},
-				password: {},
+				Email: {},
+				Password: {},
 			},
 			async authorize(credentials) {
 				const parsedCredentials = signInSchema.safeParse(credentials);
@@ -55,8 +52,26 @@ export default {
 				return null;
 			},
 		}),
-
+		Resend({
+			from: "no-reply@send.ningxikeji.com",
+		}),
 		GitHub,
 		Google,
+
+		//NOTE:如果要启用 Nodemailer，不能用 Middleware 推荐的 auth.config.ts 方式配置，否则在验证邮件地址时会抛出如下错误：
+		// Error: The edge runtime does not support Node.js 'stream' module.
+		// see https://github.com/nextauthjs/next-auth/issues/10919 。
+
+		// Nodemailer({
+		// 	server: {
+		// 		host: process.env.EMAIL_SERVER_HOST,
+		// 		port: process.env.EMAIL_SERVER_PORT,
+		// 		auth: {
+		// 			user: process.env.EMAIL_SERVER_USER,
+		// 			pass: process.env.EMAIL_SERVER_PASSWORD,
+		// 		},
+		// 	},
+		// 	from: process.env.EMAIL_FROM,
+		// }),
 	],
 } satisfies NextAuthConfig;

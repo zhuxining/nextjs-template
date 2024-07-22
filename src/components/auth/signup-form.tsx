@@ -63,7 +63,7 @@ export default function SignupForm() {
 						title: result.resultCode,
 						description: getMessageFromCode(result.resultCode),
 					});
-					router.push("/signin");
+					router.push("/");
 				}
 			}
 		} finally {
