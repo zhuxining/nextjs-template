@@ -58,11 +58,13 @@ export default function SignupForm() {
 						description: getMessageFromCode(result.resultCode),
 						variant: "destructive",
 					});
-				router.push("/");
-				toast({
-					title: result.resultCode,
-					description: getMessageFromCode(result.resultCode),
-				});
+				else {
+					toast({
+						title: result.resultCode,
+						description: getMessageFromCode(result.resultCode),
+					});
+					router.push("/signin");
+				}
 			}
 		} finally {
 			setIsLoading(false);

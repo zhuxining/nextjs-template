@@ -3,6 +3,7 @@ import { getStringFromBuffer } from "@/lib/utils";
 import { signInSchema } from "@/lib/zod";
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import EmailProvider from "next-auth/providers/email";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 

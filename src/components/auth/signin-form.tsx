@@ -22,6 +22,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { getMessageFromCode } from "@/lib/utils";
 import { signInSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -71,58 +72,62 @@ export default function SigninForm() {
 	}
 
 	return (
-		<main className="container flex items-center justify-center min-h-screen">
-			<Card className="w-full max-w-sm">
-				<CardHeader>
-					<CardTitle className="text-2xl">Login</CardTitle>
-					<CardDescription>
-						Enter your email below to login to your account.
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-							<FormField
-								control={form.control}
-								name="email"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Email</FormLabel>
-										<FormControl>
-											<Input
-												type="email"
-												placeholder="Enter your email"
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="password"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Password</FormLabel>
-										<FormControl>
-											<Input
-												type="password"
-												placeholder="Enter your password"
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<Button className="w-full" type="submit" disabled={isLoading}>
-								{isLoading ? "Sign In..." : "Sign In"}
-							</Button>
-						</form>
-					</Form>
-				</CardContent>
-			</Card>
-		</main>
+		<Card className="w-full max-w-sm">
+			<CardHeader>
+				<CardTitle className="text-2xl">Login</CardTitle>
+				<CardDescription>
+					Enter your email below to login to your account.
+				</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+						<FormField
+							control={form.control}
+							name="email"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Email</FormLabel>
+									<FormControl>
+										<Input
+											type="email"
+											placeholder="Enter your email"
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="password"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Password</FormLabel>
+									<FormControl>
+										<Input
+											type="password"
+											placeholder="Enter your password"
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<Button className="w-full" type="submit" disabled={isLoading}>
+							{isLoading ? "Sign In..." : "Sign In"}
+						</Button>
+					</form>
+				</Form>
+				<div className="mt-4 text-center text-sm">
+					Don&apos;t have an account?{" "}
+					<Link href="/signup" className="underline">
+						Sign up
+					</Link>
+				</div>
+			</CardContent>
+		</Card>
 	);
 }

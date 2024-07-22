@@ -7,7 +7,11 @@ import { usePathname } from "next/navigation";
 export function SignInButton() {
 	const pathname = usePathname();
 	return (
-		<Button disabled={pathname === "/signin"} onClick={() => signIn()}>
+		<Button
+			variant="secondary"
+			disabled={pathname === "/signin"}
+			onClick={() => signIn()}
+		>
 			Sign In
 		</Button>
 	);
