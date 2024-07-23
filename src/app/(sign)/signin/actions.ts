@@ -1,68 +1,38 @@
 "use server";
+
 import { signIn } from "@/auth";
-import { ResultCode } from "@/lib/utils";
 import { signInSchema } from "@/lib/zod";
 import { AuthError } from "next-auth";
-import { redirect } from "next/navigation";
-import { useSearchParams } from "next/navigation";
 
-interface Result {
-	type: string;
-	resultCode: ResultCode;
-}
+export async function authenticate(formData: FormData) {
+	const email = formData.get("email") as string;
+	const password = formData.get("password") as string;
 
-export async function authenticate(
-	formData: FormData,
-): Promise<Result | undefined> {
+	const parsedCredentials = signInSchema.safeParse({ email, password });
+
+	if (!parsedCredentials.success) {
+		return { error: "Invalid credentials" };
+	}
+
 	try {
-		const email = formData.get("email");
-		const password = formData.get("password");
-
-		const parsedCredentials = signInSchema.safeParse({
+		await signIn("credentials", {
 			email,
 			password,
+			redirect: false,
 		});
-
-		if (parsedCredentials.success) {
-			await signIn("credentials", {
-				email,
-				password,
-				redirect: false,
-			});
-			return {
-				type: "success",
-				resultCode: ResultCode.UserLoggedIn,
-			};
-		}
-		return {
-			type: "error",
-			resultCode: ResultCode.InvalidCredentials,
-		};
+		return { success: true };
 	} catch (error) {
 		if (error instanceof AuthError) {
 			switch (error.type) {
 				case "CredentialsSignin":
-					return {
-						type: "error",
-						resultCode: ResultCode.InvalidCredentials,
-					};
 				case "AccessDenied":
-					return {
-						type: "error",
-						resultCode: ResultCode.InvalidCredentials,
-					};
+					return { error: "Invalid credentials" };
 				case "CallbackRouteError":
-					return {
-						type: "error",
-						resultCode: ResultCode.InvalidSubmission,
-					};
-
+					return { error: "Invalid submission" };
 				default:
-					return {
-						type: "error",
-						resultCode: ResultCode.UnknownError,
-					};
+					return { error: "An unknown error occurred" };
 			}
 		}
+		return { error: "An unexpected error occurred" };
 	}
 }

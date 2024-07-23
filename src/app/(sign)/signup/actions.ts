@@ -1,104 +1,65 @@
 "use server";
 
 import { signIn } from "@/auth";
-import { getUser } from "@/auth.config";
+import { getStringFromBuffer, getUser, hashed } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { ResultCode, getStringFromBuffer } from "@/lib/utils";
-import { signInSchema } from "@/lib/zod";
+import { signUpSchema } from "@/lib/zod";
 import { AuthError } from "next-auth";
 
-export async function createUser(
-	email: string,
-	hashedPassword: string,
-	salt: string,
-) {
+async function createUser(email: string, hashedPassword: string, salt: string) {
 	const existingUser = await getUser(email);
 
 	if (existingUser) {
-		return {
-			type: "error",
-			resultCode: ResultCode.UserAlreadyExists,
-		};
+		return { error: "User already exists" };
 	}
-	{
-		const user = {
-			email,
-			password: hashedPassword,
-			salt,
-			name: email.split("@")[0].toString(),
-		};
 
-		await prisma.user.create({
-			data: user,
-		});
+	const user = {
+		email,
+		password: hashedPassword,
+		salt,
+		name: email.split("@")[0].toString(),
+	};
 
-		return {
-			type: "success",
-			resultCode: ResultCode.UserCreated,
-		};
-	}
+	await prisma.user.create({ data: user });
+	return { success: true };
 }
 
-interface Result {
-	type: string;
-	resultCode: ResultCode;
-}
-
-export async function signup(formData: FormData): Promise<Result | undefined> {
+export async function signup(formData: FormData) {
 	const email = formData.get("email")?.toString().toLowerCase() as string;
 	const password = formData.get("password") as string;
+	const confirmPassword = formData.get("confirmPassword") as string;
 
-	const parsedCredentials = signInSchema.safeParse({
+	const parsedCredentials = signUpSchema.safeParse({
 		email,
 		password,
+		confirmPassword,
 	});
 
-	if (parsedCredentials.success) {
-		const salt = crypto.randomUUID();
-
-		const encoder = new TextEncoder();
-		const saltedPassword = encoder.encode(password + salt);
-		const hashedPasswordBuffer = await crypto.subtle.digest(
-			"SHA-512",
-			saltedPassword,
-		);
-		const hashedPassword = getStringFromBuffer(hashedPasswordBuffer);
-
-		try {
-			const result = await createUser(email, hashedPassword, salt);
-
-			if (result.resultCode === ResultCode.UserCreated) {
-				await signIn("credentials", {
-					email,
-					password,
-					redirect: false,
-				});
-			}
-
-			return result;
-		} catch (error) {
-			if (error instanceof AuthError) {
-				switch (error.type) {
-					case "CredentialsSignin":
-						return {
-							type: "error",
-							resultCode: ResultCode.InvalidCredentials,
-						};
-					default:
-						return {
-							type: "error",
-							resultCode: ResultCode.UnknownError,
-						};
-				}
-			}
-			return {
-				type: "error",
-				resultCode: ResultCode.UnknownError,
-			};
-		}
+	if (!parsedCredentials.success) {
+		return { error: "Invalid credentials" };
 	}
-	return {
-		type: "error",
-		resultCode: ResultCode.InvalidCredentials,
-	};
+
+	const salt = crypto.randomUUID();
+	const hashedPassword = await hashed(password, salt);
+
+	try {
+		const result = await createUser(email, hashedPassword, salt);
+
+		if ("error" in result) {
+			return result;
+		}
+
+		await signIn("credentials", {
+			email,
+			password,
+			redirect: false,
+		});
+
+		return { success: true };
+	} catch (error) {
+		if (error instanceof AuthError) {
+			return { error: "Invalid credentials" };
+		}
+		return { error: "An unexpected error occurred" };
+	}
 }

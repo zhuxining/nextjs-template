@@ -1,5 +1,12 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
+import { useFormStatus } from "react-dom";
+import { useForm } from "react-hook-form";
+import type { z } from "zod";
+
 import { signup } from "@/app/(sign)/signup/actions";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,18 +25,23 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
-import { getMessageFromCode } from "@/lib/utils";
+import { useToast } from "@/components/ui/use-toast";
 import { signUpSchema } from "@/lib/zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import type { z } from "zod";
+
+function SubmitButton() {
+	const { pending } = useFormStatus();
+
+	return (
+		<Button className="w-full" type="submit" disabled={pending}>
+			{pending ? "Creating Account..." : "Sign Up"}
+		</Button>
+	);
+}
 
 export default function SignupForm() {
+	const { toast } = useToast();
 	const router = useRouter();
-	const [isLoading, setIsLoading] = useState(false);
+	const [formError, setFormError] = useState<string | null>(null);
 
 	const form = useForm<z.infer<typeof signUpSchema>>({
 		resolver: zodResolver(signUpSchema),
@@ -38,38 +50,31 @@ export default function SignupForm() {
 			password: "",
 			confirmPassword: "",
 		},
-		mode: "onChange",
+		mode: "onBlur",
 	});
 
-	async function onSubmit(data: z.infer<typeof signUpSchema>) {
-		setIsLoading(true);
-
-		try {
+	const onSubmit = useCallback(
+		async (data: z.infer<typeof signUpSchema>) => {
+			setFormError(null);
 			const formData = new FormData();
 			formData.append("email", data.email);
 			formData.append("password", data.password);
+			formData.append("confirmPassword", data.confirmPassword);
 
 			const result = await signup(formData);
 
-			if (result) {
-				if (result.type === "error")
-					toast({
-						title: result.resultCode,
-						description: getMessageFromCode(result.resultCode),
-						variant: "destructive",
-					});
-				else {
-					router.push("/");
-					toast({
-						title: result.resultCode,
-						description: getMessageFromCode(result.resultCode),
-					});
-				}
+			if ("success" in result) {
+				router.push("/");
+				toast({
+					title: "Success",
+					description: "Your account has been created successfully.",
+				});
+			} else {
+				setFormError(result.error || "An unexpected error occurred");
 			}
-		} finally {
-			setIsLoading(false);
-		}
-	}
+		},
+		[toast, router],
+	);
 
 	return (
 		<Card className="w-full max-w-sm">
@@ -131,9 +136,10 @@ export default function SignupForm() {
 								</FormItem>
 							)}
 						/>
-						<Button className="w-full" type="submit" disabled={isLoading}>
-							{isLoading ? "Creating Account..." : "Sign Up"}
-						</Button>
+						{formError && (
+							<div className="text-sm text-red-500">{formError}</div>
+						)}
+						<SubmitButton />
 					</form>
 				</Form>
 			</CardContent>

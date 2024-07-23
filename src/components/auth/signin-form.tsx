@@ -1,5 +1,14 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useState } from "react";
+import { useFormStatus } from "react-dom";
+import { useForm } from "react-hook-form";
+import type { z } from "zod";
+
 import { authenticate } from "@/app/(sign)/signin/actions";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,26 +29,25 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
-import { getMessageFromCode } from "@/lib/utils";
 import { signInSchema } from "@/lib/zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import github from "next-auth/providers/github";
-import { signIn } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import type { z } from "zod";
+
+function SubmitButton() {
+	const { pending } = useFormStatus();
+
+	return (
+		<Button className="w-full" type="submit" disabled={pending}>
+			{pending ? "Signing In..." : "Sign In"}
+		</Button>
+	);
+}
 
 export default function SigninForm() {
 	const { toast } = useToast();
-	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
 	const searchParams = useSearchParams();
+	const [formError, setFormError] = useState<string | null>(null);
 
-	const callbackUrl = searchParams.get("callbackUrl") || "/";
+	const callbackUrl = searchParams.get("callbackUrl") ?? "/";
 
 	const form = useForm<z.infer<typeof signInSchema>>({
 		resolver: zodResolver(signInSchema),
@@ -47,38 +55,34 @@ export default function SigninForm() {
 			email: "",
 			password: "",
 		},
-		mode: "onChange",
+		mode: "onBlur",
 	});
 
-	async function onSubmit(data: z.infer<typeof signInSchema>) {
-		setIsLoading(true);
-		try {
+	const onSubmit = useCallback(
+		async (data: z.infer<typeof signInSchema>) => {
+			setFormError(null);
 			const formData = new FormData();
 			formData.append("email", data.email);
 			formData.append("password", data.password);
 
 			const result = await authenticate(formData);
-			console.log(callbackUrl);
 
-			if (result) {
-				if (result.type === "error")
-					toast({
-						title: result.resultCode,
-						description: getMessageFromCode(result.resultCode),
-						variant: "destructive",
-					});
-				else {
-					router.push(callbackUrl);
-					toast({
-						title: result.resultCode,
-						description: getMessageFromCode(result.resultCode),
-					});
-				}
+			if (result.success) {
+				router.push(callbackUrl);
+				toast({
+					title: "Success",
+					description: "You have successfully logged in.",
+				});
+			} else {
+				setFormError(result.error || "An unexpected error occurred");
 			}
-		} finally {
-			setIsLoading(false);
-		}
-	}
+		},
+		[toast, router, callbackUrl],
+	);
+
+	const handleGithubSignIn = useCallback(() => {
+		signIn("github", { callbackUrl });
+	}, [callbackUrl]);
 
 	return (
 		<Card className="w-full max-w-sm">
@@ -125,9 +129,10 @@ export default function SigninForm() {
 								</FormItem>
 							)}
 						/>
-						<Button className="w-full" type="submit" disabled={isLoading}>
-							{isLoading ? "Sign In..." : "Sign In"}
-						</Button>
+						{formError && (
+							<div className="text-sm text-red-500">{formError}</div>
+						)}
+						<SubmitButton />
 					</form>
 				</Form>
 				<div className="mt-4 text-center text-sm">
@@ -139,7 +144,8 @@ export default function SigninForm() {
 				<Separator className="my-4" />
 				<Button
 					variant="secondary"
-					onClick={() => signIn("github", { callbackUrl: callbackUrl })}
+					onClick={handleGithubSignIn}
+					className="w-full"
 				>
 					Sign In With Github
 				</Button>

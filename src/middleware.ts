@@ -1,30 +1,29 @@
-import authConfig from "@/auth.config";
 import NextAuth from "next-auth";
+import authConfig from "./auth.config";
 
 const { auth } = NextAuth(authConfig);
 
-export default auth(async function middleware(req) {
-	// const publicPaths = ["/login", "/signup", "/api/auth", "/ex"];
-	// const isPublicRoute =
-	// 	publicPaths.some((path) => req.nextUrl.pathname.startsWith(path)) ||
-	// 	req.nextUrl.pathname === "/";
-	// if (!req.auth && !isPublicRoute) {
-	// 	return Response.redirect(new URL("/", req.nextUrl.origin));
-	// }
+export default auth((req) => {
+	const { nextUrl } = req;
+
+	const isAuth = !!req.auth;
+
+	const publicPaths = ["/login", "/signup", "/api/auth", "/ex"];
+	const isPublicRoute = publicPaths.some((path) =>
+		nextUrl.pathname.startsWith(path),
+	);
+
+	if (!isAuth && !isPublicRoute) {
+		return Response.redirect(new URL("/signin", nextUrl));
+	}
+
+	if (
+		isAuth &&
+		(nextUrl.pathname === "/signin" || nextUrl.pathname === "/signup")
+	) {
+		return Response.redirect(new URL("/", nextUrl));
+	}
 });
-
-// import { auth } from "@/auth";
-// export const { auth: middleware } = NextAuth(authConfig);
-// export default auth((req) => {
-// 	const publicPaths = ["/login", "/signup", "/api/auth", "/ex"];
-// 	const isPublicRoute =
-// 		publicPaths.some((path) => req.nextUrl.pathname.startsWith(path)) ||
-// 		req.nextUrl.pathname === "/";
-// 	if (!req.auth && !isPublicRoute) {
-// 		return Response.redirect(new URL("/api/auth/signin", req.nextUrl.origin));
-// 	}
-// });
-
 export const config = {
 	matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
