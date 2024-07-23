@@ -13,7 +13,7 @@ import Resend from "next-auth/providers/resend";
 export default {
 	adapter: PrismaAdapter(prisma) as Adapter,
 	pages: {
-		signIn: "/signin",
+		// signIn: "/signin",
 		newUser: "/signup",
 		error: "/auth/error",
 	},
@@ -81,7 +81,7 @@ export default {
 		Resend({
 			from: "no-reply@send.ningxikeji.com",
 		}),
-		GitHub,
+		GitHub({ allowDangerousEmailAccountLinking: true }),
 		Google,
 	],
 } satisfies NextAuthConfig;
