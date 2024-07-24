@@ -13,32 +13,16 @@ import { Label } from "@/components/ui/label";
 export default function Es() {
 	return (
 		<main className="container flex justify-center">
-			<Card className="w-full max-w-sm">
-				<CardHeader>
-					<CardTitle className="text-2xl">Login</CardTitle>
-					<CardDescription>
-						Enter your email below to login to your account.
-					</CardDescription>
-				</CardHeader>
-				<CardContent className="grid gap-4">
-					<div className="grid gap-2">
-						<Label htmlFor="email">Email</Label>
-						<Input
-							id="email"
-							type="email"
-							placeholder="m@example.com"
-							required
-						/>
-					</div>
-					<div className="grid gap-2">
-						<Label htmlFor="password">Password</Label>
-						<Input id="password" type="password" required />
-					</div>
-				</CardContent>
-				<CardFooter>
-					<Button className="w-full">Sign in</Button>
-				</CardFooter>
-			</Card>
+			<div className="fixed bottom-1 left-1 z-50 flex h-6 w-6 items-center justify-center rounded-full bg-gray-800 p-3 font-mono text-xs text-white">
+				<div className="block sm:hidden">xs</div>
+				<div className="hidden sm:block md:hidden lg:hidden xl:hidden 2xl:hidden">
+					sm
+				</div>
+				<div className="hidden md:block lg:hidden xl:hidden 2xl:hidden">md</div>
+				<div className="hidden lg:block xl:hidden 2xl:hidden">lg</div>
+				<div className="hidden xl:block 2xl:hidden">xl</div>
+				<div className="hidden 2xl:block">2xl</div>
+			</div>
 		</main>
 	);
 }

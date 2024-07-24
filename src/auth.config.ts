@@ -13,7 +13,7 @@ import Resend from "next-auth/providers/resend";
 export default {
 	adapter: PrismaAdapter(prisma) as Adapter,
 	pages: {
-		// signIn: "/signin",
+		signIn: "/signin",
 		newUser: "/signup",
 		error: "/auth/error",
 	},

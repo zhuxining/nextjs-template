@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/header";
+import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
-import { SessionProvider } from "next-auth/react";
 import { Inter as FontSans } from "next/font/google";
 
 const fontSans = FontSans({
@@ -36,8 +36,8 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					<Header />
 					{children}
+					<TailwindIndicator />
 					<Toaster />
 				</ThemeProvider>
 			</body>
