@@ -11,9 +11,10 @@ export default function Home() {
 					className="dark:invert"
 					src={nextLogo}
 					alt="Next.js logo"
-					width={180}
+					width={150}
 					height={38}
 					priority
+					style={{ width: "auto", height: "auto" }}
 				/>
 				<ol className="font-mono list-inside list-decimal text-sm text-center sm:text-left">
 					<li className="mb-2">
@@ -34,10 +35,11 @@ export default function Home() {
 					>
 						<Image
 							className="dark:invert"
-							src="/vercel.svg"
+							src="/og.jpg"
 							alt="Vercel logomark"
 							width={20}
 							height={20}
+							style={{ width: "auto", height: "auto" }}
 						/>
 						Deploy now
 					</a>
