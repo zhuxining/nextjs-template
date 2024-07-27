@@ -4,6 +4,7 @@ const nextConfig = {
 		serverActions: {
 			allowedOrigins: ["localhost", "*.my-proxy.com"],
 		},
+		mdxRs: true,
 	},
 	logging: {
 		fetches: {
