@@ -6,13 +6,14 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
-import { Inter as FontSans } from "next/font/google";
+// import { Inter } from "next/font/google";
 
-const fontSans = FontSans({
-	subsets: ["latin"],
-	variable: "--font-sans",
-	display: "swap",
-});
+// const fontSans = Inter({
+// 	subsets: ["latin"],
+// 	variable: "--font-sans",
+// 	display: "swap",
+// });
+
 export const metadata: Metadata = {
 	title: {
 		default: siteConfig.name,
@@ -43,12 +44,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="zh" suppressHydrationWarning>
-			<body
-				className={cn(
-					"min-h-screen bg-background font-sans antialiased",
-					fontSans.variable,
-				)}
-			>
+			<body className={cn("min-h-screen bg-background font-sans antialiased")}>
 				<ThemeProvider
 					attribute="class"
 					defaultTheme="system"

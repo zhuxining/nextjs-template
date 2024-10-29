@@ -1,7 +1,7 @@
 "use client";
 
-import { authenticate } from "@/app/(sign)/signin/actions";
-import { Icons } from "@/components/icons";
+import { authenticate } from "@/app/(auth)/signin/actions";
+import { Icons } from "@/components/svg-icons";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -21,6 +21,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
+import { Suspense } from "react";
 import { useFormStatus } from "react-dom";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
@@ -35,7 +36,7 @@ function SubmitButton() {
 	);
 }
 
-export default function SigninForm() {
+function SigninFormContent() {
 	const { toast } = useToast();
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -141,5 +142,13 @@ export default function SigninForm() {
 				</Link>
 			</div>
 		</div>
+	);
+}
+
+export default function SigninForm() {
+	return (
+		<Suspense fallback={<div>Loading...</div>}>
+			<SigninFormContent />
+		</Suspense>
 	);
 }
