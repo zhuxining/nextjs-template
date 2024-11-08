@@ -1,43 +1,47 @@
 ## About The Project
 
-
+A simple next.js template.
 
 ### Built With
 
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+* [Next.js](https://nextjs.org/)
+* [Prisma](https://www.prisma.io/docs/orm)
+* [Auth.js](https://authjs.dev/)
+* [Zod](https://zod.dev/)
+* [Shadcn/ui](https://ui.shadcn.com/)
+* [TailwindCSS](https://tailwindcss.com/)
+* [Bun](https://bun.sh/)
+* [Biome](https://biomejs.dev/)
 
 ## Getting Started
 
 ### Prerequisites
 
-
-
 ### Installation
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ## Usage
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ## Roadmap
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ## Contributing
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ## License
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ## Contact
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ## Acknowledgments
 
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
